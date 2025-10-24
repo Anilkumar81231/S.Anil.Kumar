@@ -1,0 +1,222 @@
+/* frontend/components/ChatWidget.module.css */
+
+/* === Root container: fixed to viewport, bottom-right === */
+.container {
+  position: fixed;
+  right: 24px;
+  bottom: calc(24px + env(safe-area-inset-bottom)); /* iOS safe area */
+  z-index: 2147483647; /* very high so it sits above everything */
+  font-family: system-ui, sans-serif;
+  pointer-events: none; /* allow clicks through except on children */
+}
+
+/* Minimized group (pill + bubble) */
+.minimizedGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto; /* clickable */
+  animation: fadeIn 0.3s ease;
+}
+
+/* CTA pill */
+.ctaPill {
+  background: linear-gradient(90deg, #4f46e5, #3b82f6);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+.ctaPill:hover { transform: translateY(-2px); }
+
+/* CTA text: type once then remain visible */
+.ctaText {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 0ch; /* start collapsed */
+  animation: typingOnce 1.9s steps(36, end) 0s 1 forwards;
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+/* blinking cursor (stays) */
+.ctaCursor { opacity: 0.8; animation: blink 1s infinite; }
+
+/* Bubble button */
+.bubble {
+  background: radial-gradient(circle at top left, #4f46e5, #2563eb);
+  border: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.bubble:hover { transform: scale(1.05); box-shadow: 0 8px 22px rgba(0,0,0,0.3); }
+.bubble:focus { transform: translateY(-3px); }
+.bubble:active { transform: scale(.96); }
+
+/* === Chat panel (open state) === */
+.panel {
+  position: fixed;
+  right: 24px;
+  bottom: calc(90px + env(safe-area-inset-bottom)); /* sits above bubble */
+  z-index: 2147483647;
+
+  width: 320px;
+  max-height: 420px;
+  height: 380px;
+
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(8,20,40,0.28);
+  overflow: hidden;
+  margin-top: 8px;
+
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(20,20,20,0.04);
+  pointer-events: auto; /* clickable */
+}
+
+/* Header */
+.header {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: linear-gradient(180deg,#fafbff,#fff);
+  border-bottom: 1px solid rgba(20,20,20,0.03);
+}
+.title { font-size: 14px; font-weight: 700; color: #111827; }
+.minBtn { background: transparent; border: none; font-size: 16px; cursor: pointer; line-height: 1; }
+
+/* Messages */
+.messages {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: linear-gradient(180deg,#ffffff,#fbfdff);
+}
+.msgAssistant { align-self: flex-start; max-width: 86%; }
+.msgUser { align-self: flex-end; max-width: 86%; }
+.msgText {
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.35;
+  background: #f1f5ff;
+  color: #0f172a;
+}
+.msgUser .msgText { background: #e6f0ff; }
+
+/* Footer / input */
+.footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border-top: 1px solid rgba(20,20,20,0.03);
+}
+.input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(20,20,20,0.06);
+  font-size: 13px;
+  outline: none;
+}
+.sendBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: #0ea5e9;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sendBtn:disabled { opacity: 0.6; cursor: default; }
+
+/* Keyframes */
+@keyframes typingOnce {
+  0% { max-width: 0ch; }
+  100% { max-width: 36ch; } /* adjust if CTA text length changes */
+}
+@keyframes blink {
+  0% { opacity: 1; }
+  49% { opacity: 1; }
+  50% { opacity: 0; }
+  99% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive — keep text visible, slightly smaller */
+@media (max-width: 420px) {
+  .ctaText {
+    font-size: 12px;
+    max-width: 20ch; /* limit width to fit small screens */
+    animation: none; /* skip typing animation to avoid overflow */
+  }
+  .ctaCursor { display: none; } /* optional */
+  .minimizedGroup { gap: 6px; flex-wrap: wrap; }
+  .bubble { width: 44px; height: 44px; }
+
+  .panel {
+    width: 280px;
+    height: 360px;
+    right: 16px;
+    bottom: calc(80px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Focus outlines for a11y */
+.ctaPill:focus,
+.bubble:focus,
+.minBtn:focus,
+.sendBtn:focus,
+.input:focus {
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+  outline: none;
+}
+
+/* Logo styling */
+.chatLogo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.chatLogo:hover { transform: scale(1.06); }
+
+/* Header left (icon + title) */
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.headerLogo {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+}

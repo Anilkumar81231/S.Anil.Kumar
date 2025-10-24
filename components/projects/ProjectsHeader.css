@@ -1,0 +1,4 @@
+/* ProjectsHeader.css */
+.animate__once {
+  animation-iteration-count: 1 !important;
+}
