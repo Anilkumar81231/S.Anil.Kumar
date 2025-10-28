@@ -45,10 +45,6 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
               className="rounded-full bg-white/90 text-black hover:scale-110 transition-transform duration-300"
               asChild
             >
-              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Live
-              </a>
             </Button>
             <Button
               size="sm"
